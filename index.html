@@ -54,10 +54,14 @@
     color:var(--white);letter-spacing:.01em;
   }
   .brand-mark{
-    width:30px;height:30px;border-radius:50%;
-    border:1.5px solid rgba(255,255,255,0.65);
+    width:34px;height:34px;
     display:flex;align-items:center;justify-content:center;
-    font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--white);
+    flex-shrink:0;
+  }
+  .brand-mark img{
+    width:100%;height:100%;object-fit:contain;
+    /* torna o traço fino do logo visível sobre fundos escuros/claros */
+    filter:drop-shadow(0 0 0.5px rgba(255,255,255,0.9));
   }
   nav.menu{display:flex;align-items:center;gap:clamp(18px,3vw,40px);}
   nav.menu a{
@@ -194,7 +198,7 @@
 
 <header id="siteHeader">
   <div class="brand">
-    <span class="brand-mark">RX</span>
+    <span class="brand-mark"><img src="logo.png" alt="Recepção & Câncer"></span>
     Recepção &amp; Câncer
   </div>
 
