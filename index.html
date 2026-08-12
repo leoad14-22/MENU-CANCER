@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recepção &amp; Cuidado — O primeiro contato da sua equipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1F4EF;
+    --paper-2:#E7ECE4;
+    --ink:#16211D;
+    --ink-soft:#4C5A54;
+    --pine:#123D37;
+    --pine-mid:#3E7268;
+    --gold:#C6952F;
+    --line:#D2D9CC;
+    --white:#FCFDFB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  .display{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  a:focus-visible, button:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px clamp(20px,5vw,56px);
+    transition:background .35s ease, box-shadow .35s ease, padding .35s ease;
+  }
+  header.scrolled{
+    background:rgba(20,32,28,0.92);
+    backdrop-filter:blur(6px);
+    padding:12px clamp(20px,5vw,56px);
+    box-shadow:0 1px 0 rgba(255,255,255,0.06);
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;
+    color:var(--white);letter-spacing:.01em;
+  }
+  .brand-mark{
+    width:30px;height:30px;border-radius:50%;
+    border:1.5px solid rgba(255,255,255,0.65);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--white);
+  }
+  nav.menu{display:flex;align-items:center;gap:clamp(18px,3vw,40px);}
+  nav.menu a{
+    color:var(--white);font-size:.92rem;letter-spacing:.02em;
+    position:relative;padding:4px 0;
+  }
+  nav.menu a::after{
+    content:"";position:absolute;left:0;bottom:-2px;width:0;height:1px;
+    background:var(--gold);transition:width .25s ease;
+  }
+  nav.menu a:hover::after{width:100%;}
+  .cta-btn{
+    display:inline-flex;align-items:center;gap:9px;
+    background:var(--gold);color:var(--pine);
+    padding:11px 20px;border-radius:2px;
+    border:1px solid var(--gold);
+    font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.76rem;
+    letter-spacing:.07em;text-transform:uppercase;
+    transition:background .25s ease, color .25s ease, transform .2s ease, box-shadow .25s ease;
+  }
+  .cta-btn::after{display:none;}
+  .cta-btn .arrow{display:inline-block;transition:transform .25s ease;}
+  .cta-btn:hover{
+    background:transparent;color:var(--gold);
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(0,0,0,0.18);
+  }
+  .cta-btn:hover .arrow{transform:translateX(4px);}
+
+  .hamburger{
+    display:none;flex-direction:column;gap:5px;
+    background:none;border:none;cursor:pointer;padding:6px;z-index:110;
+  }
+  .hamburger span{width:24px;height:2px;background:var(--white);display:block;transition:transform .25s ease, opacity .25s ease;}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  .mobile-menu{
+    position:fixed;inset:0;background:var(--pine);
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+    gap:26px;padding:0 40px;
+    transform:translateX(100%);transition:transform .35s ease;
+    z-index:105;
+  }
+  .mobile-menu.open{transform:translateX(0);}
+  .mobile-menu a{
+    color:var(--white);font-family:'Fraunces',serif;font-size:1.8rem;font-weight:500;
+  }
+  .mobile-menu .cta-btn{margin-top:10px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;height:100svh;min-height:560px;
+    display:flex;align-items:flex-end;
+    overflow:hidden;
+  }
+  .hero video{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:saturate(0.92) brightness(0.92);
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(15,26,22,0.55) 0%, rgba(15,26,22,0.15) 32%, rgba(15,26,22,0.15) 55%, rgba(12,22,19,0.88) 100%);
+  }
+  .hero-content{
+    position:relative;z-index:2;padding:0 clamp(20px,5vw,56px) clamp(48px,8vh,96px);
+    max-width:760px;
+  }
+  .eyebrow{
+    color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:.78rem;
+    letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px;display:block;
+  }
+  .hero h1{
+    color:var(--white);font-size:clamp(2.2rem,5.2vw,4rem);font-weight:500;
+    line-height:1.08;letter-spacing:-.01em;
+  }
+  .hero h1 em{font-style:italic;color:var(--gold);font-weight:400;}
+  .hero p{
+    color:rgba(255,255,255,0.82);margin-top:20px;font-size:1.05rem;max-width:520px;line-height:1.55;
+  }
+  .hero-actions{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap;}
+
+  /* ---------- MOMENTOS (substitui a escala) ---------- */
+  .section-momentos{
+    padding:clamp(64px,10vh,110px) clamp(20px,5vw,56px);
+    max-width:1080px;margin:0 auto;
+  }
+  .section-head{margin-bottom:56px;max-width:620px;}
+  .section-head .eyebrow{color:var(--pine-mid);}
+  .section-head h2{
+    font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:500;color:var(--ink);
+  }
+  .section-head p{color:var(--ink-soft);margin-top:14px;line-height:1.6;}
+
+  .momentos-flow{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--line);
+  }
+  .momento{
+    padding:32px 28px 0 0;border-left:1px solid var(--line);
+    position:relative;
+  }
+  .momento:first-child{border-left:none;padding-left:0;}
+  .momento:not(:first-child){padding-left:28px;}
+  .momento .num{
+    font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--gold);
+    letter-spacing:.08em;display:block;margin-bottom:18px;
+  }
+  .momento h3{
+    font-family:'Fraunces',serif;font-weight:500;font-size:1.35rem;color:var(--pine);
+    margin-bottom:12px;
+  }
+  .momento p{color:var(--ink-soft);font-size:.94rem;line-height:1.6;}
+
+  footer{
+    padding:28px clamp(20px,5vw,56px);border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:.8rem;color:var(--ink-soft);
+  }
+
+  @media (max-width:900px){
+    .momentos-flow{grid-template-columns:1fr;}
+    .momento{border-left:none;border-top:1px solid var(--line);padding:28px 0 0 !important;}
+    .momento:first-child{border-top:none;}
+  }
+  @media (max-width:760px){
+    nav.menu{display:none;}
+    .hamburger{display:flex;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="brand">
+    <span class="brand-mark">RX</span>
+    Recepção &amp; Cuidado
+  </div>
+
+  <nav class="menu">
+    <a href="#inicio">Início</a>
+    <a href="#momentos">O que fazemos</a>
+    <a href="mailto:contato@recepcaoecuidado.com.br" class="cta-btn">Falar com a recepção <span class="arrow">→</span></a>
+  </nav>
+
+  <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#inicio">Início</a>
+  <a href="#momentos">O que fazemos</a>
+  <a href="mailto:contato@recepcaoecuidado.com.br" class="cta-btn">Falar com a recepção <span class="arrow">→</span></a>
+</div>
+
+<section class="hero" id="inicio">
+  <video autoplay muted loop playsinline>
+    <source src="enfermeira-recepcao.mp4" type="video/mp4">
+  </video>
+  <div class="hero-content">
+    <span class="eyebrow">Cuidado contínuo · 24 horas</span>
+    <h1>Todo cuidado começa <em>com quem recebe</em>.</h1>
+    <p>Antes de qualquer procedimento, existe alguém organizando o dia, acolhendo quem chega e conectando cada pessoa ao cuidado certo. Essa é a recepção.</p>
+    <div class="hero-actions">
+      <a href="#momentos" class="cta-btn">Conhecer o trabalho <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section-momentos" id="momentos">
+  <div class="section-head">
+    <span class="eyebrow mono">O papel da recepção</span>
+    <h2>Três momentos, uma só atenção</h2>
+    <p>A recepção não é uma parada antes do cuidado — é onde ele começa. Cada visita passa por três momentos, na mesma ordem, todos os dias.</p>
+  </div>
+
+  <div class="momentos-flow">
+    <div class="momento">
+      <span class="num mono">01 — Acolhe</span>
+      <h3>Recebe quem chega</h3>
+      <p>Escuta o motivo da visita, tranquiliza quem está ansioso e organiza a espera com clareza sobre o que vem a seguir.</p>
+    </div>
+    <div class="momento">
+      <span class="num mono">02 — Organiza</span>
+      <h3>Direciona o cuidado</h3>
+      <p>Confirma dados, prioriza urgências e prepara o encaminhamento certo para a equipe de enfermagem responsável.</p>
+    </div>
+    <div class="momento">
+      <span class="num mono">03 — Conecta</span>
+      <h3>Acompanha até o fim</h3>
+      <p>Mantém a pessoa informada do início ao fim da visita, servindo de ponte entre paciente, família e equipe clínica.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Recepção &amp; Cuidado — atendimento e acolhimento da equipe</span>
+  <span>contato@recepcaoecuidado.com.br</span>
+</footer>
+
+<script>
+  // header background on scroll
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // mobile menu toggle
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburgerBtn.addEventListener('click', () => {
+    hamburgerBtn.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    hamburgerBtn.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  }));
+</script>
+
+</body>
+</html>
