@@ -60,7 +60,6 @@
   }
   .brand-mark img{
     width:100%;height:100%;object-fit:contain;
-    /* torna o traço fino do logo visível sobre fundos escuros/claros */
     filter:drop-shadow(0 0 0.5px rgba(255,255,255,0.9));
   }
   nav.menu{display:flex;align-items:center;gap:clamp(18px,3vw,40px);}
@@ -118,14 +117,30 @@
     position:relative;height:100svh;min-height:560px;
     display:flex;align-items:flex-end;
     overflow:hidden;
+    /* fixa o vídeo na viewport enquanto o conteúdo passa por cima,
+       reforçando a sensação de profundidade do desfoque */
+    isolation:isolate;
   }
   .hero video{
     position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-    filter:saturate(0.92) brightness(0.92);
+    filter:saturate(0.92) brightness(0.92) blur(0px);
+    transform:scale(1);
+    /* o próprio filter/transform é animado via JS a cada frame de scroll,
+       então evitamos transition aqui para não "brigar" com o rAF */
+    will-change:filter, transform;
+    transform-origin:center center;
   }
   .hero::before{
-    content:"";position:absolute;inset:0;
+    content:"";position:absolute;inset:0;z-index:1;
     background:linear-gradient(180deg, rgba(15,26,22,0.55) 0%, rgba(15,26,22,0.15) 32%, rgba(15,26,22,0.15) 55%, rgba(12,22,19,0.88) 100%);
+    transition:opacity .1s linear;
+  }
+  /* véu extra que ganha opacidade junto com o blur, dando um acabamento
+     "vidro fosco" elegante em vez de um vídeo apenas desfocado */
+  .hero-frost{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 90% at 30% 100%, rgba(18,61,55,0.35), transparent 60%);
+    opacity:0;
   }
   .hero-content{
     position:relative;z-index:2;padding:0 clamp(20px,5vw,56px) clamp(48px,8vh,96px);
@@ -145,7 +160,7 @@
   }
   .hero-actions{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap;}
 
-  /* ---------- MOMENTOS (substitui a escala) ---------- */
+  /* ---------- MOMENTOS ---------- */
   .section-momentos{
     padding:clamp(64px,10vh,110px) clamp(20px,5vw,56px);
     max-width:1080px;margin:0 auto;
@@ -220,9 +235,10 @@
 </div>
 
 <section class="hero" id="inicio">
-  <video autoplay muted loop playsinline>
+  <video autoplay muted loop playsinline id="heroVideo">
     <source src="enfermeira-recepcao.mp4" type="video/mp4">
   </video>
+  <div class="hero-frost" id="heroFrost"></div>
   <div class="hero-content">
     <span class="eyebrow">Cuidado contínuo · 24 horas</span>
     <h1>Todo cuidado começa <em>com quem recebe</em>.</h1>
@@ -267,9 +283,47 @@
 <script>
   // header background on scroll
   const header = document.getElementById('siteHeader');
-  window.addEventListener('scroll', () => {
+
+  // ---------- EFEITO DE DESFOQUE PROGRESSIVO NO VÍDEO ----------
+  const heroVideo = document.getElementById('heroVideo');
+  const heroFrost = document.getElementById('heroFrost');
+  const heroSection = document.getElementById('inicio');
+
+  const MAX_BLUR = 14;      // px de desfoque máximo
+  const MAX_SCALE = 1.08;   // leve zoom acompanhando o blur
+  const MAX_DARKEN = 0.15;  // escurecimento extra máximo
+
+  let ticking = false;
+
+  function updateHeroBlur() {
+    const heroHeight = heroSection.offsetHeight;
+    // progresso de 0 a 1 conforme o usuário rola pela altura do hero
+    const progress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1);
+    // easing suave (ease-out) para o efeito não parecer mecânico
+    const eased = 1 - Math.pow(1 - progress, 2);
+
+    const blur = (eased * MAX_BLUR).toFixed(2);
+    const scale = (1 + eased * (MAX_SCALE - 1)).toFixed(4);
+    const brightness = (0.92 - eased * MAX_DARKEN).toFixed(3);
+
+    heroVideo.style.filter = `saturate(0.92) brightness(${brightness}) blur(${blur}px)`;
+    heroVideo.style.transform = `scale(${scale})`;
+    heroFrost.style.opacity = eased.toFixed(3);
+
+    ticking = false;
+  }
+
+  function onScroll() {
     header.classList.toggle('scrolled', window.scrollY > 40);
-  });
+    if (!ticking) {
+      window.requestAnimationFrame(updateHeroBlur);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', updateHeroBlur);
+  updateHeroBlur();
 
   // mobile menu toggle
   const hamburgerBtn = document.getElementById('hamburgerBtn');
